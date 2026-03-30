@@ -1,0 +1,28 @@
+name: Update Calendar
+
+on:
+  schedule:
+    - cron: "0 * * * *"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - run: pip install requests
+
+      - run: python clean_calendar.py
+
+      - run: |
+          git config user.name "bot"
+          git config user.email "bot@github.com"
+          git add cleaned.ics
+          git commit -m "update calendar" || echo "no changes"
+          git push
